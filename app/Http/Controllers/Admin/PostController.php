@@ -47,7 +47,7 @@ class PostController extends Controller
             ],
             [
                 'title.required' => 'Il campo è obbligatorio',
-                'titile.unique' => "Il campo è già esistente",
+                'title.unique' => "Il campo è già esistente",
                 'title.max' => 'Il campo non può superare i 255 caratteri'
             ]
         );
@@ -84,9 +84,9 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Post $post)
     {
-        //
+        return view( 'admin.posts.update', compact( 'post' ) );
     }
 
     /**
@@ -96,9 +96,12 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Post $post)
     {
-        //
+        $form_data = $request->All();
+        $post->update($form_data);
+
+        return redirect()->route('admin.posts.index');
     }
 
     /**
@@ -107,8 +110,11 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Post $post)
     {
-        //
+        
+        $post->delete();
+        return redirect()->route('admin.posts.index');
+
     }
 }
