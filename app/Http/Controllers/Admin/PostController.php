@@ -26,7 +26,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view( 'admin.posts.create' );
     }
 
     /**
@@ -37,7 +37,32 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        /*
+            1. validazione dei dati
+        */
+
+        $request->validate(
+            [
+                'title' => 'required|unique:posts|max:255',
+            ],
+            [
+                'title.required' => 'Il campo è obbligatorio',
+                'titile.unique' => "Il campo è già esistente",
+                'title.max' => 'Il campo non può superare i 255 caratteri'
+            ]
+        );
+
+        $slug = Post::titleToSlug($request->title);
+
+        $form_data = $request->All();
+
+        $form_data['slug'] = $slug;
+
+        $newPost = new Post();
+        $newPost->fill($form_data);
+        $newPost->save();
+
+        return redirect()->route('admin.posts.index');
     }
 
     /**
@@ -46,9 +71,11 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
-        //
+    public function show(Post $post)
+    {   
+
+        
+        return view('admin.posts.show', compact('post'));
     }
 
     /**
