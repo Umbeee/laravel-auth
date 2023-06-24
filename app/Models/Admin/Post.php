@@ -15,5 +15,5 @@ class Post extends Model
         return Str::slug($title, '-');
     }
 
-    protected $fillable = [ 'title', 'content', 'slug' ];
+    protected $fillable = [ 'title', 'content', 'slug', 'cover_image' ];
 }

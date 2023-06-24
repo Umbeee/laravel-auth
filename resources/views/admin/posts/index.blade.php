@@ -2,10 +2,11 @@
 
 @section('content')
 <div class="container">
-    <h2 class="fs-4 text-secondary my-4">
-        {{ __('Posts') }} | 
-        <a href="{{route('admin.posts.create')}}">Crea un nuovo Post!</a>
-    </h2>
+    <div class=" d-flex justify-content-between align-items-center">
+        <h2 class="fs-4 text-secondary my-4">{{ __('Posts') }}</h2>
+            <a href="{{route('admin.posts.create')}}">Crea un nuovo Post!</a>
+    </div>
+    
     <div class="row justify-content-center">
         <div class="col">
 
@@ -14,7 +15,6 @@
                 <div class="card-header">
                     {{ $elem->id }} - {{ $elem->title }}
                     <a href="{{route('admin.posts.show', $elem)}}">Mostra singolo post</a>
-                    <a href=""></a>
                 </div>
 
                 <div class="card-body">
@@ -26,7 +26,7 @@
                             @csrf
                             @method('DELETE')
         
-                            <button class="btn btn-danger mt-3">Delete</a>
+                            <button class="btn btn-danger mt-3" onclick="return confirm('vuoi davvero eliminare il post?')">Delete</a>
                         </form>
                     </div>
                     <div>

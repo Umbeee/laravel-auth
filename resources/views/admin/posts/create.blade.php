@@ -4,7 +4,7 @@
 @section('content')
 
     <div class="container">
-        <form action="{{ route('admin.posts.store') }}" method="POST">
+        <form action="{{ route('admin.posts.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <h2 class="fs-4 text-secondary my-4">Crea il tuo post compilando i campi, poi invia il tutto!</h2>
             <div class="mb-3">
@@ -17,6 +17,10 @@
             <div class="mb-3">
                 <label for="post-content" class="form-label">Content</label>
                 <textarea class="form-control" name="content" id="post-content" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="post-cover-image" class="form-label">image</label>
+                <input type="file" class="form-control" name="cover_image" id="post-cover-image" rows="3"></input>
             </div>
             <button type="submit" class="btn btn-primary">invia</button>
         </form>

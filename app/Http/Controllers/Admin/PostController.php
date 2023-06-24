@@ -5,6 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Admin\Post;
+use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\UpdatePostRequest;
+use Illuminate\Support\Facades\Storage;
+
+
 class PostController extends Controller
 {
     /**
@@ -35,28 +40,35 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StorePostRequest $request)
     {
         /*
             1. validazione dei dati
         */
 
-        $request->validate(
-            [
-                'title' => 'required|unique:posts|max:255',
-            ],
-            [
-                'title.required' => 'Il campo è obbligatorio',
-                'title.unique' => "Il campo è già esistente",
-                'title.max' => 'Il campo non può superare i 255 caratteri'
-            ]
-        );
+        // $request->validate(
+        //     [
+        //         'title' => 'required|unique:posts|max:255',
+        //     ],
+        //     [
+        //         'title.required' => 'Il campo è obbligatorio',
+        //         'title.unique' => "Il campo è già esistente",
+        //         'title.max' => 'Il campo non può superare i 255 caratteri'
+        //     ]
+        // );
+
+        $form_data = $request->validated();
 
         $slug = Post::titleToSlug($request->title);
 
         $form_data = $request->All();
 
         $form_data['slug'] = $slug;
+
+        if( $request->hasFile('cover_image') ){
+            $img = Storage::disk('public')->put( 'post_images', $request->cover_image );
+            $form_data['cover_image'] = $img;
+        }
 
         $newPost = new Post();
         $newPost->fill($form_data);
@@ -96,9 +108,22 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post)
+    public function update(UpdatePostRequest $request, Post $post)
     {
+        $form_data = $request->validated();
         $form_data = $request->All();
+        $slug = Post::titleToSlug($request->title);
+        $form_data['slug'] = $slug;
+        if( $request->hasFile('cover_image') ){
+
+            if( $post->cover_image ){
+                Storage::delete( $post->cover_image );
+            }
+
+            $img = Storage::disk('public')->put( 'post_images', $request->cover_image );
+            $form_data['cover_image'] = $img;
+        }
+
         $post->update($form_data);
 
         return redirect()->route('admin.posts.index');
@@ -113,6 +138,12 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         
+        if( $post->cover_image ){
+
+            Storage::delete( $post->cover_image );
+
+        }
+
         $post->delete();
         return redirect()->route('admin.posts.index');
 
